@@ -1,0 +1,195 @@
+@import url('https://fonts.cdnfonts.com/css/friz-quadrata-std');
+html, body{
+    overflow: hidden;
+}
+body {
+    font-family: 'Friz Quadrata Std', sans-serif;
+    background: url("background.jpg") no-repeat;
+    background-size: 1500px;
+    min-height: 300px;
+    height: 100%;
+    width: 400px;
+    margin: 0;
+} 
+.extension{
+    height: 100%; 
+    padding: 10px 0;
+}
+
+.extension-header{
+    background-color: rgba(0, 56, 0, 0.5);
+    display: flex;
+    padding: 5px 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+.extension-header__text{
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow:
+        2px 2px #000,
+        4px 4px #222;
+    letter-spacing: 1px;
+}
+.extension-header__image{
+    img{
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.extension__buttons{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+.extension__button{
+    font-family: 'Friz Quadrata Std', sans-serif;
+    background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+    border: 2px solid #C2A300;
+    color: #fff;
+    font-size: 14px;
+    padding: 5px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 0 #9E7E00, 0 2px 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    text-shadow: 1px 1px 2px #000;
+}
+.extension__button:hover {
+    background: linear-gradient(to bottom, #66BB6A, #388E3C);
+    box-shadow: 0 2px 0 #9E7E00, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.extension-settings{
+    padding: 10px;        
+}
+
+.extension-settings__title{
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #FFD700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.extension-settings__title .arrow {
+    display: inline-block;
+    color: #FFD700; 
+    text-shadow: 1px 1px 0 #000;
+    transform: translateY(1px);
+    transition: transform 0.2s ease;
+}
+
+.extension-settings__title.open .arrow {
+    transform: rotate(90deg);
+}
+
+/* Контейнер групи */
+.settings-group {
+    margin-bottom: 15px;
+}
+
+/* Назва групи */
+.group-title {
+    font-size: 14px;
+    color: #FFD700;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Стиль радіо-лейбла */
+.settings-radio {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #FFD700;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding: 5px;
+}
+
+/* Ховаємо стандартну радіо-кнопку */
+.settings-radio input[type="radio"] {
+    display: none;
+}
+
+/* Створюємо кастомну радіо-кнопку */
+.settings-radio .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFD700;
+    background-color: #111;
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 #000;
+    margin-right: 10px;
+    position: relative;
+}
+
+/* Текст біля кнопки */
+.settings-radio .checkmark + span,
+.settings-radio .checkmark + div,
+.settings-radio .checkmark + .settings-radio__text {
+    padding-left: 10px;
+}
+
+/* Відмічена крапка в центрі */
+.settings-radio input[type="radio"]:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFD700;
+    border-radius: 50%;
+    box-shadow: 1px 1px 0 #000;
+}
+
+/* Кастомний чекбокс (вигляд як у радіо) */
+.settings-radio input[type="checkbox"] {
+    display: none;
+}
+
+
+/* Квадратний чекбокс */
+.settings-radio .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFD700;
+    background-color: #111;
+    box-shadow: 2px 2px 0 #000;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: relative;
+}
+
+/* Квадрат всередині при виборі */
+.settings-radio input[type="checkbox"]:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFD700;
+    box-shadow: 1px 1px 0 #000;
+}
+
+
+.extension__counter{
+    color: gold;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.hidden {
+    display: none;
+}

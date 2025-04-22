@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links Highlighter</title>
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="extension">
+        <div class="extension__header extension-header">
+            <div class="extension-header__text">Links Highlighter</div>
+            <div class="extension-header__image">
+                <img src="./icon.png" alt="Extension Logo">
+            </div>
+        </div>
+        <div class="extension__counter" id="external-links-count">Waiting...</div>
+        <div class="extension__buttons">
+            <button id="highlight-btn" class="extension__button">Highlight</button>
+            <button id="reset-btn" class="extension__button">Reset</button>
+        </div>
+        <div class="extension__settings extension-settings">
+            <div class="extension-settings__title">
+                <span class="arrow">&#9656;</span> 
+                Settings
+            </div>
+            <div class="extension-settings__radios hidden">
+                <div class="settings-group">
+                    <label class="settings-radio">
+                        <input type="checkbox" id="highlight-on-load">
+                        <span class="checkmark"></span>
+                        Highlight on page load
+                    </label>
+                </div>
+                <!-- Link type -->
+                <div class="settings-group">
+                    <div class="group-title">Link type:</div>
+                    <label class="settings-radio">
+                        <input type="radio" name="link-type" value="all" checked>
+                        <span class="checkmark"></span>
+                        All
+                    </label>
+                    <label class="settings-radio">
+                        <input type="radio" name="link-type" value="external">
+                        <span class="checkmark"></span>
+                        External only
+                    </label>
+                    <label class="settings-radio">
+                        <input type="radio" name="link-type" value="internal">
+                        <span class="checkmark"></span>
+                        Internal only
+                    </label>
+                </div>
+        
+                <!-- Follow status -->
+                <div class="settings-group">
+                    <div class="group-title">Follow type:</div>
+                    <label class="settings-radio">
+                        <input type="radio" name="follow-type" value="all" checked>
+                        <span class="checkmark"></span>
+                        All
+                    </label>
+                    <label class="settings-radio">
+                        <input type="radio" name="follow-type" value="dofollow">
+                        <span class="checkmark"></span>
+                        Dofollow only
+                    </label>
+                    <label class="settings-radio">
+                        <input type="radio" name="follow-type" value="nofollow">
+                        <span class="checkmark"></span>
+                        Nofollow only
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="extension__settings extension-settings">
+            <div class="extension-settings__title full-info-toggle">
+                <span class="arrow">&#9656;</span>
+                Full info
+            </div>
+            <div class="extension-settings__radios hidden full-info-content">
+                <div class="settings-group">
+                    <div class="group-title">Detected link info:</div>
+                    <ul style="padding-left: 20px; color: #FFD700; font-size: 13px; text-shadow: 1px 1px 0 #000;">
+                        <li>Total links on page: <span id="info-total">0</span></li> 
+                        <li>External dofollow: <span id="info-ext-dofollow">0</span></li>
+                        <li>External nofollow: <span id="info-ext-nofollow">0</span></li>
+                        <li>Internal dofollow: <span id="info-int-dofollow">0</span></li>
+                        <li>Internal nofollow: <span id="info-int-nofollow">0</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
