@@ -42,7 +42,6 @@ function injectZeldaStyles() {
     document.head.appendChild(style);
 }
 
-
 function highlightLinks(filters) {
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;

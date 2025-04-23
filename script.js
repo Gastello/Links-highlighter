@@ -145,9 +145,8 @@ function injectZeldaStyles() {
     document.head.appendChild(style);
 }
 
-
-
 function highlightLinks(filters) {
+    injectZeldaStyles();
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
     let total = 0, count = 0;
@@ -186,7 +185,6 @@ function highlightLinks(filters) {
             link.style.fontWeight = 'bold';
             link.style.borderRadius = '4px';
             link.style.transition = 'all 0.3s ease';
-            link.setAttribute('data-zelda-highlight', 'true');
 
             if (isNofollow) {
                 link.setAttribute('data-zelda-highlight', 'nofollow');
@@ -207,7 +205,7 @@ function highlightLinks(filters) {
                     img.style.boxShadow = '0 0 10px #ffd700';
                 }
             }
-        }
+        } 
 
         total++;
     });
