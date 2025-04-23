@@ -1,17 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
+    injectZeldaStyles(); 
+
     const highlightBtn = document.getElementById('highlight-btn');
     const resetBtn = document.getElementById('reset-btn');
     const radios = document.querySelectorAll('input[type="radio"]');
     const highlightOnLoadCheckbox = document.getElementById('highlight-on-load');
 
-    // Завантаження налаштувань
     chrome.storage.sync.get(['highlightOnLoad', 'linkType', 'followType'], (result) => {
         highlightOnLoadCheckbox.checked = result.highlightOnLoad || false;
-        document.querySelector(`input[name="link-type"][value="${result.linkType || 'all'}"]`).checked = true;
-        document.querySelector(`input[name="follow-type"][value="${result.followType || 'all'}"]`).checked = true;
+        const linkType = result.linkType || 'all';
+        const followType = result.followType || 'all';
+        document.querySelector(`input[name="link-type"][value="${linkType}"]`).checked = true;
+        document.querySelector(`input[name="follow-type"][value="${followType}"]`).checked = true;
+
+        if (result.highlightOnLoad) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    function: highlightLinks,
+                    args: [{ linkType, followType }]
+                }, (results) => {
+                    const countElement = document.getElementById('external-links-count');
+                    if (countElement && results?.[0]?.result) {
+                        countElement.textContent = results[0].result;
+                    }
+                });
+            });
+        }
     });
 
-    // Показати інфо про всі посилання
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript({
             target: { tabId: tabs[0].id },
@@ -61,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     highlightBtn.addEventListener('click', () => {
         const filters = getSelectedFilters();
-
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
@@ -103,7 +119,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Підсвічування
+function injectZeldaStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes zeldaGlowGold {
+            0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+            50% { box-shadow: 0 0 20px #ffef70, 0 0 30px #ffd700; }
+            100% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+        }
+
+        @keyframes zeldaGlowPurple {
+            0% { box-shadow: 0 0 5px #6b2aa5, 0 0 10px #6b2aa5; }
+            50% { box-shadow: 0 0 20px #9f5ee0, 0 0 30px #6b2aa5; }
+            100% { box-shadow: 0 0 5px #6b2aa5, 0 0 10px #6b2aa5; }
+        }
+
+        a[data-zelda-highlight="dofollow"] {
+            animation: zeldaGlowGold 2s infinite;
+        }
+
+        a[data-zelda-highlight="nofollow"] {
+            animation: zeldaGlowPurple 2s infinite;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+
+
 function highlightLinks(filters) {
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
@@ -113,7 +156,6 @@ function highlightLinks(filters) {
         let linkDomain;
         try {
             const url = new URL(link.href, window.location.href);
-            if (url.href.startsWith('javascript:') || ['tel:', 'mailto:'].includes(url.protocol)) return;
             linkDomain = url.hostname;
         } catch { return; }
 
@@ -131,6 +173,7 @@ function highlightLinks(filters) {
             (filters.followType === 'dofollow' && isDofollow) ||
             (filters.followType === 'nofollow' && isNofollow);
 
+        link.removeAttribute('data-zelda-highlight');
         link.style.backgroundColor = '';
         link.style.color = '';
         link.style.fontWeight = '';
@@ -141,16 +184,28 @@ function highlightLinks(filters) {
         if (matchesLinkType && matchesFollowType) {
             count++;
             link.style.fontWeight = 'bold';
+            link.style.borderRadius = '4px';
+            link.style.transition = 'all 0.3s ease';
+            link.setAttribute('data-zelda-highlight', 'true');
 
             if (isNofollow) {
-                link.style.backgroundColor = 'blue';
-                link.style.color = 'white';
+                link.setAttribute('data-zelda-highlight', 'nofollow');
+                link.style.backgroundColor = '#6b2aa5';
+                link.style.color = '#fff0f5';
                 link.title = 'nofollow';
-                if (img) img.style.border = '5px solid blue';
+                if (img) {
+                    img.style.border = '3px solid #6b2aa5';
+                    img.style.boxShadow = '0 0 10px #6b2aa5';
+                }
             } else {
-                link.style.backgroundColor = 'aqua';
+                link.setAttribute('data-zelda-highlight', 'dofollow');
+                link.style.backgroundColor = '#ffd700';
+                link.style.color = '#000';
                 link.title = 'dofollow';
-                if (img) img.style.border = '5px solid aqua';
+                if (img) {
+                    img.style.border = '3px solid #ffd700';
+                    img.style.boxShadow = '0 0 10px #ffd700';
+                }
             }
         }
 
@@ -160,21 +215,26 @@ function highlightLinks(filters) {
     return `Highlighted: ${count} of ${total} links`;
 }
 
-// Скидання стилів
 function resetLinkStyles() {
     const links = document.querySelectorAll('a');
     links.forEach(link => {
         link.style.backgroundColor = '';
         link.style.color = '';
         link.style.fontWeight = '';
+        link.style.borderRadius = '';
+        link.style.transition = '';
         link.title = '';
+        link.removeAttribute('data-zelda-highlight');
+
         const img = link.querySelector('img');
-        if (img) img.style.border = '';
+        if (img) {
+            img.style.border = '';
+            img.style.boxShadow = '';
+        }
     });
     return 'Styles reset.';
 }
 
-// Збір статистики
 function collectLinkInfo() {
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
@@ -184,7 +244,6 @@ function collectLinkInfo() {
         let linkDomain;
         try {
             const url = new URL(link.href, window.location.href);
-            if (url.href.startsWith('javascript:') || ['tel:', 'mailto:'].includes(url.protocol)) return;
             linkDomain = url.hostname;
         } catch { return; }
 
