@@ -5,9 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('reset-btn');
     const radios = document.querySelectorAll('input[type="radio"]');
     const highlightOnLoadCheckbox = document.getElementById('highlight-on-load');
+    const highlightSuspiciousLinksCheckbox  = document.getElementById('highlight-suspicious-links');
 
-    chrome.storage.sync.get(['highlightOnLoad', 'linkType', 'followType'], (result) => {
+    chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType'], (result) => {
         highlightOnLoadCheckbox.checked = result.highlightOnLoad || false;
+        highlightSuspiciousLinksCheckbox.checked = result.highlightSuspiciousLinks || false;
         const linkType = result.linkType || 'all';
         const followType = result.followType || 'all';
         document.querySelector(`input[name="link-type"][value="${linkType}"]`).checked = true;
@@ -41,18 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('info-ext-nofollow').textContent = info.extNofollow;
                 document.getElementById('info-int-dofollow').textContent = info.intDofollow;
                 document.getElementById('info-int-nofollow').textContent = info.intNofollow;
+                document.getElementById('info-suspicious').textContent = info.suspicious || 0;
             }
         });
     });
 
     highlightOnLoadCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ highlightOnLoad: highlightOnLoadCheckbox.checked });
+        resetStyles();
     });
+
+    highlightSuspiciousLinksCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ highlightSuspiciousLinks: highlightSuspiciousLinksCheckbox.checked });
+        resetStyles();
+    })
 
     const getSelectedFilters = () => {
         const linkType = document.querySelector('input[name="link-type"]:checked')?.value || 'all';
         const followType = document.querySelector('input[name="follow-type"]:checked')?.value || 'all';
-        return { linkType, followType };
+        const highlightSuspiciousLinks = highlightSuspiciousLinksCheckbox.checked;
+        return { linkType, followType, highlightSuspiciousLinks };
     };
 
     const saveFilters = () => {
@@ -146,12 +156,23 @@ function injectZeldaStyles() {
 }
 
 function highlightLinks(filters) {
+    function isWeirdLink(href) {
+        return !href ||
+            href === '#' ||
+            href === '' ||
+            href.startsWith('javascript:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('mailto:') ||
+            href.startsWith('ftp:');
+    }
+
     injectZeldaStyles();
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
     let total = 0, count = 0;
 
     links.forEach(link => {
+        const href = link.getAttribute('href');
         let linkDomain;
         try {
             const url = new URL(link.href, window.location.href);
@@ -179,13 +200,17 @@ function highlightLinks(filters) {
         link.title = '';
         const img = link.querySelector('img');
         if (img) img.style.border = '';
-
+        
         if (matchesLinkType && matchesFollowType) {
             count++;
             link.style.fontWeight = 'bold';
             link.style.borderRadius = '4px';
             link.style.transition = 'all 0.3s ease';
 
+            if (filters.highlightSuspiciousLinks && isWeirdLink(href)) {
+                link.style.border = '2px solid red';
+                link.title = 'Suspicious link';
+            }
             if (isNofollow) {
                 link.setAttribute('data-zelda-highlight', 'nofollow');
                 link.style.backgroundColor = '#6b2aa5';
@@ -222,8 +247,8 @@ function resetLinkStyles() {
         link.style.borderRadius = '';
         link.style.transition = '';
         link.title = '';
+        link.style.border = '';
         link.removeAttribute('data-zelda-highlight');
-
         const img = link.querySelector('img');
         if (img) {
             img.style.border = '';
@@ -234,11 +259,25 @@ function resetLinkStyles() {
 }
 
 function collectLinkInfo() {
+    function isWeirdLink(href) {
+        return !href ||
+            href === '#' ||
+            href === '' ||
+            href.startsWith('javascript:') ||
+            href.startsWith('tel:') ||
+            href.startsWith('mailto:') ||
+            href.startsWith('ftp:');
+    }
+    
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
-    let total = 0, extDofollow = 0, extNofollow = 0, intDofollow = 0, intNofollow = 0;
+    let total = 0, extDofollow = 0, extNofollow = 0, intDofollow = 0, intNofollow = 0, suspicious = 0;
 
     links.forEach(link => {
+        const href = link.getAttribute('href');
+        if (isWeirdLink(href)) suspicious++;
+        
+
         let linkDomain;
         try {
             const url = new URL(link.href, window.location.href);
@@ -256,5 +295,6 @@ function collectLinkInfo() {
         total++;
     });
 
-    return { total, extDofollow, extNofollow, intDofollow, intNofollow };
+    return { total, extDofollow, extNofollow, intDofollow, intNofollow, suspicious };
 }
+
