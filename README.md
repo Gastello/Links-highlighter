@@ -62,6 +62,7 @@ Click "Full info" in the popup to see:
 
 - Export link data as CSV
 - Custom highlight color setting
+- Detect and categorize file links (e.g., PDF, DOCX, ZIP, MP4) to help identify downloadable resources and media assets.
 
 ---
 
