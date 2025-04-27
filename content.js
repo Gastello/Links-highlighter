@@ -3,7 +3,7 @@ chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkTyp
         const filters = {
             linkType: result.linkType || 'all',
             followType: result.followType || 'all',
-            highlightSuspiciousLinks: result.highlightSuspiciousLinks || false,
+            highlightSuspiciousLinks: result.highlightSuspiciousLinks,
         };
 
         const run = () => setTimeout(() => {
@@ -96,16 +96,13 @@ function highlightLinks(filters) {
             href.startsWith('appname:') ||
             href.startsWith('magnet:');
     }
-
     function getBaseDomain(hostname) {
         const parts = hostname.split('.');
         return parts.length >= 2 ? parts.slice(-2).join('.') : hostname;
     }
-
     function isSubdomainOf(domain, base) {
         return domain !== base && domain.endsWith('.' + base);
     }
-
     injectZeldaStyles();
 
     const links = document.querySelectorAll('a');
@@ -115,14 +112,12 @@ function highlightLinks(filters) {
     links.forEach(link => {
         const href = link.getAttribute('href');
         const rel = link.getAttribute('rel') || '';
-        let isSuspicious = isWeirdLink(href);
         const isNofollow = rel.includes('nofollow');
+        let isSuspicious = isWeirdLink(href);
 
-        let linkType = 'external';
+        let linkType = '';
 
-        if (isSuspicious) {
-            linkType = 'suspicious';
-        } else {
+        if (!isSuspicious) {
             try {
                 const url = new URL(link.href, window.location.href);
                 const linkDomain = url.hostname;
@@ -136,9 +131,12 @@ function highlightLinks(filters) {
                     linkType = 'external';
                 }
             } catch {
-                linkType = 'suspicious';
                 isSuspicious = true;
             }
+        }
+
+        if (isSuspicious) {
+            linkType = 'external';  
         }
 
         // Reset styles
@@ -147,6 +145,7 @@ function highlightLinks(filters) {
         link.style.color = '';
         link.style.fontWeight = '';
         link.style.opacity = 1;
+        link.style.display = 'inline-block';
         link.style.borderRadius = '';
         link.style.transition = '';
         link.title = '';
@@ -166,7 +165,9 @@ function highlightLinks(filters) {
             (filters.followType === 'dofollow' && !isNofollow) ||
             (filters.followType === 'nofollow' && isNofollow);
 
-        if (matchesLinkType && matchesFollowType) {
+        const shouldHighlightSuspicious = filters.highlightSuspiciousLinks && isSuspicious;
+
+        if (matchesLinkType && matchesFollowType && (shouldHighlightSuspicious || !isSuspicious)) {
             link.style.fontWeight = 'bold';
             link.style.borderRadius = '4px';
             link.style.transition = 'all 0.3s ease';
@@ -175,7 +176,7 @@ function highlightLinks(filters) {
             let textColor = '#000';
             let dataHighlight = '';
 
-            if (filters.highlightSuspiciousLinks && isSuspicious) {
+            if (shouldHighlightSuspicious && isSuspicious) {
                 dataHighlight = isNofollow ? 'suspicious-nofollow' : 'suspicious-dofollow';
                 bgColor = isNofollow ? '#dc143c' : '#ff4500';  
                 textColor = '#fff';
@@ -189,7 +190,6 @@ function highlightLinks(filters) {
                 dataHighlight = isNofollow ? 'external-nofollow' : 'external-dofollow';
                 bgColor = isNofollow ? '#8a2be2' : '#00bfff';  
             }
-            
 
             if (dataHighlight) {
                 link.setAttribute('data-zelda-highlight', dataHighlight);
