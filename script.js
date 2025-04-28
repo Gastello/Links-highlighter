@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    injectZeldaStyles(); 
-
     const highlightBtn = document.getElementById('highlight-btn');
     const resetBtn = document.getElementById('reset-btn');
     const radios = document.querySelectorAll('input[type="radio"]');
@@ -12,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightSuspiciousLinksCheckbox.checked = result.highlightSuspiciousLinks || false;
         const linkType = result.linkType || 'all';
         const followType = result.followType || 'all';
-        const highlightSuspiciousLinks = result.highlightSuspiciousLinks || 'all';
+        const highlightSuspiciousLinks = result.highlightSuspiciousLinks;
         document.querySelector(`input[name="link-type"][value="${linkType}"]`).checked = true;
         document.querySelector(`input[name="follow-type"][value="${followType}"]`).checked = true;
 
@@ -171,7 +169,6 @@ function highlightLinks(filters) {
     function isSubdomainOf(domain, base) {
         return domain !== base && domain.endsWith('.' + base);
     }
-    injectZeldaStyles();
 
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
@@ -279,72 +276,6 @@ function highlightLinks(filters) {
     });
 
     return `Highlighted: ${count} of ${total} links`;
-}
-
-
-function injectZeldaStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Internal Links */
-        @keyframes zeldaGlowInternalDofollow {
-            0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }  
-            50% { box-shadow: 0 0 20px #ffec8b, 0 0 30px #ffd700; }
-            100% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
-        }
-        @keyframes zeldaGlowInternalNofollow {
-            0% { box-shadow: 0 0 5px #ffa500, 0 0 10px #ffa500; }  
-            50% { box-shadow: 0 0 20px #ffb347, 0 0 30px #ffa500; }
-            100% { box-shadow: 0 0 5px #ffa500, 0 0 10px #ffa500; }
-        }
-
-        /* External Links */
-        @keyframes zeldaGlowExternalDofollow {
-            0% { box-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }  
-            50% { box-shadow: 0 0 20px #87cefa, 0 0 30px #00bfff; }
-            100% { box-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }
-        }
-        @keyframes zeldaGlowExternalNofollow {
-            0% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }  
-            50% { box-shadow: 0 0 20px #ba55d3, 0 0 30px #8a2be2; }
-            100% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }
-        }
-
-        /* Subdomain Links */
-        @keyframes zeldaGlowSubdomainDofollow {
-            0% { box-shadow: 0 0 5px #32cd32, 0 0 10px #32cd32; }  
-            50% { box-shadow: 0 0 20px #7cfc00, 0 0 30px #32cd32; }
-            100% { box-shadow: 0 0 5px #32cd32, 0 0 10px #32cd32; }
-        }
-        @keyframes zeldaGlowSubdomainNofollow {
-            0% { box-shadow: 0 0 5px #228b22, 0 0 10px #228b22; }  
-            50% { box-shadow: 0 0 20px #6b8e23, 0 0 30px #228b22; }
-            100% { box-shadow: 0 0 5px #228b22, 0 0 10px #228b22; }
-        }
-
-        /* Suspicious Links */
-        @keyframes zeldaGlowSuspiciousDofollow {
-            0% { box-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500; }  
-            50% { box-shadow: 0 0 20px #ff6347, 0 0 30px #ff4500; }
-            100% { box-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500; }
-        }
-        @keyframes zeldaGlowSuspiciousNofollow {
-            0% { box-shadow: 0 0 5px #dc143c, 0 0 10px #dc143c; }  
-            50% { box-shadow: 0 0 20px #ff1493, 0 0 30px #dc143c; }
-            100% { box-shadow: 0 0 5px #dc143c, 0 0 10px #dc143c; }
-        }
-
-        /* Apply animations */
-        a[data-zelda-highlight="internal-dofollow"] { animation: zeldaGlowInternalDofollow 2s infinite; }
-        a[data-zelda-highlight="internal-nofollow"] { animation: zeldaGlowInternalNofollow 2s infinite; }
-        a[data-zelda-highlight="external-dofollow"] { animation: zeldaGlowExternalDofollow 2s infinite; }
-        a[data-zelda-highlight="external-nofollow"] { animation: zeldaGlowExternalNofollow 2s infinite; }
-        a[data-zelda-highlight="subdomain-dofollow"] { animation: zeldaGlowSubdomainDofollow 2s infinite; }
-        a[data-zelda-highlight="subdomain-nofollow"] { animation: zeldaGlowSubdomainNofollow 2s infinite; }
-        a[data-zelda-highlight="suspicious-dofollow"] { animation: zeldaGlowSuspiciousDofollow 2s infinite; }
-        a[data-zelda-highlight="suspicious-nofollow"] { animation: zeldaGlowSuspiciousNofollow 2s infinite; }
-    `;
-
-    document.head.appendChild(style);
 }
 
 function resetLinkStyles() {

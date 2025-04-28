@@ -1,4 +1,6 @@
 chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType'], (result) => {
+    injectZeldaStyles();
+
     if (result.highlightOnLoad) {
         const filters = {
             linkType: result.linkType || 'all',
@@ -7,7 +9,6 @@ chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkTyp
         };
 
         const run = () => setTimeout(() => {
-            injectZeldaStyles();
             highlightLinks(filters);
         }, 700);
 
@@ -18,6 +19,7 @@ chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkTyp
 });
 
 function injectZeldaStyles() {
+    if (document.getElementById('zelda-styles')) return;
     const style = document.createElement('style');
     style.textContent = `
         /* Internal Links */
@@ -103,7 +105,6 @@ function highlightLinks(filters) {
     function isSubdomainOf(domain, base) {
         return domain !== base && domain.endsWith('.' + base);
     }
-    injectZeldaStyles();
 
     const links = document.querySelectorAll('a');
     const currentDomain = window.location.hostname;
