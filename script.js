@@ -162,10 +162,12 @@ function highlightLinks(filters) {
             href.startsWith('appname:') ||
             href.startsWith('magnet:');
     }
+
     function getBaseDomain(hostname) {
         const parts = hostname.split('.');
         return parts.length >= 2 ? parts.slice(-2).join('.') : hostname;
     }
+
     function isSubdomainOf(domain, base) {
         return domain !== base && domain.endsWith('.' + base);
     }
@@ -203,23 +205,7 @@ function highlightLinks(filters) {
         }
 
         if (isSuspicious) {
-            linkType = 'external';  
-        }
-
-        // Reset styles
-        link.removeAttribute('data-zelda-highlight');
-        link.style.backgroundColor = '';
-        link.style.color = '';
-        link.style.fontWeight = '';
-        link.style.opacity = 1;
-        link.style.display = 'inline-block';
-        link.style.borderRadius = '';
-        link.style.transition = '';
-        link.title = '';
-        const img = link.querySelector('img');
-        if (img) {
-            img.style.border = '';
-            img.style.boxShadow = '';
+            linkType = 'external';
         }
 
         total++;
@@ -235,48 +221,34 @@ function highlightLinks(filters) {
             (filters.followType === 'nofollow' && isNofollow);
 
         const shouldHighlightSuspicious = filters.highlightSuspiciousLinks && isSuspicious;
- 
+
         if (matchesLinkType && matchesFollowType && (shouldHighlightSuspicious || !isSuspicious)) {
             count++;
-            link.style.fontWeight = 'bold';
-            link.style.borderRadius = '4px';
-            link.style.transition = 'all 0.3s ease';
 
-            let bgColor = '';
-            let textColor = '#000';
             let dataHighlight = '';
 
             if (shouldHighlightSuspicious && isSuspicious) {
                 dataHighlight = isNofollow ? 'suspicious-nofollow' : 'suspicious-dofollow';
-                bgColor = isNofollow ? '#dc143c' : '#ff4500';  
-                textColor = '#fff';
             } else if (linkType === 'internal') {
                 dataHighlight = isNofollow ? 'internal-nofollow' : 'internal-dofollow';
-                bgColor = isNofollow ? '#ffa500' : '#ffd700';  
             } else if (linkType === 'subdomain') {
                 dataHighlight = isNofollow ? 'subdomain-nofollow' : 'subdomain-dofollow';
-                bgColor = isNofollow ? '#228b22' : '#32cd32'; 
             } else if (linkType === 'external') {
                 dataHighlight = isNofollow ? 'external-nofollow' : 'external-dofollow';
-                bgColor = isNofollow ? '#8a2be2' : '#00bfff';  
             }
 
             if (dataHighlight) {
                 link.setAttribute('data-zelda-highlight', dataHighlight);
-                link.style.backgroundColor = bgColor;
-                link.style.color = textColor;
-                link.title = dataHighlight.replace(/-/g, ' ');
+                link.setAttribute('title', dataHighlight.replace(/-/g, ' '));
             }
-
-            if (img) {
-                img.style.border = `3px solid ${bgColor}`;
-                img.style.boxShadow = `0 0 10px ${bgColor}`;
-            }
+        } else {
+            link.removeAttribute('data-zelda-highlight');
         }
     });
 
     return `Highlighted: ${count} of ${total} links`;
 }
+
 
 function resetLinkStyles() {
     const links = document.querySelectorAll('a');
