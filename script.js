@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightOnLoadCheckbox = document.getElementById('highlight-on-load');
     const highlightSuspiciousLinksCheckbox  = document.getElementById('highlight-suspicious-links');
 
-    chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType'], (result) => {
+    chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType', 'highlightedCount'], (result) => {
         highlightOnLoadCheckbox.checked = result.highlightOnLoad || false;
         highlightSuspiciousLinksCheckbox.checked = result.highlightSuspiciousLinks || false;
         const linkType = result.linkType || 'all';
@@ -13,8 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const highlightSuspiciousLinks = result.highlightSuspiciousLinks;
         document.querySelector(`input[name="link-type"][value="${linkType}"]`).checked = true;
         document.querySelector(`input[name="follow-type"][value="${followType}"]`).checked = true;
-
+        const countElement = document.getElementById('external-links-count');
+        
         if (result.highlightOnLoad) {
+            if (countElement && result.highlightedCount) {
+                countElement.textContent = result.highlightedCount;
+            }
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                 chrome.scripting.executeScript({
                     target: { tabId: tabs[0].id },
@@ -89,6 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const resetStyles = () => {
+        const countElement = document.getElementById('external-links-count');
+        if (countElement) {
+            countElement.textContent = 'Waiting...';
+        }
+        chrome.storage.sync.remove('highlightedCount');
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
@@ -112,9 +121,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 function: highlightLinks,
                 args: [filters]
             }, (results) => {
+                const text = results?.[0]?.result;
                 const countElement = document.getElementById('external-links-count');
-                if (countElement && results?.[0]?.result) {
-                    countElement.textContent = results[0].result;
+                if (countElement && text) {
+                    countElement.textContent = text;
+                    chrome.storage.sync.set({ highlightedCount: text });
                 }
             });
         });
@@ -122,10 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resetBtn.addEventListener('click', () => {
         resetStyles();
-        const countElement = document.getElementById('external-links-count');
-        if (countElement) {
-            countElement.textContent = 'Waiting...';
-        }
     });
 
     const title = document.querySelector('.extension-settings__title');
