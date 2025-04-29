@@ -1,6 +1,20 @@
-chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType'], (result) => {
-    injectZeldaStyles();
+chrome.storage.sync.remove('highlightedCount');
 
+chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType', 
+    'internalDofollowColor', 'externalDofollowColor', 'subdomainDofollowColor', 'suspiciousDofollowColor',
+    'internalNofollowColor', 'externalNofollowColor', 'subdomainNofollowColor', 'suspiciousNofollowColor'], (result) => {
+    const colorsSettings = {
+        internalDofollowColor: result.internalDofollowColor || '#ffd700',
+        externalDofollowColor: result.externalDofollowColor || '#00bfff',
+        subdomainDofollowColor: result.subdomainDofollowColor || '#32cd32',
+        suspiciousDofollowColor: result.suspiciousDofollowColor|| '#ff4500',
+        internalNofollowColor: result.internalNofollowColor || '#ffa500',
+        externalNofollowColor: result.externalNofollowColor || '#8a2be2',
+        subdomainNofollowColor: result.subdomainNofollowColor || '#228b22',
+        suspiciousNofollowColor: result.suspiciousNofollowColor|| '#dc143c'
+    }
+    injectZeldaStyles(colorsSettings);
+    
     if (result.highlightOnLoad) {
         const filters = {
             linkType: result.linkType || 'all',
@@ -18,56 +32,61 @@ chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkTyp
     }
 });
 
-function injectZeldaStyles() {
-    if (document.getElementById('zelda-styles')) return;
-    const style = document.createElement('style');
-    style.id = 'zelda-styles';
+function injectZeldaStyles(colorsSettings) {
+    let style = document.getElementById('zelda-styles');
+    
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'zelda-styles';
+        document.head.appendChild(style);
+    }
+
     style.textContent = `
         /* Animations */
         @keyframes zeldaGlowInternalDofollow {
-            0% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
-            50% { box-shadow: 0 0 20px #ffec8b, 0 0 30px #ffd700; }
-            100% { box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.internalDofollowColor}, 0 0 10px ${colorsSettings.internalDofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.internalDofollowColor}, 0 0 30px ${colorsSettings.internalDofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.internalDofollowColor}, 0 0 10px ${colorsSettings.internalDofollowColor}; }
         }
         @keyframes zeldaGlowInternalNofollow {
-            0% { box-shadow: 0 0 5px #ffa500, 0 0 10px #ffa500; }
-            50% { box-shadow: 0 0 20px #ffb347, 0 0 30px #ffa500; }
-            100% { box-shadow: 0 0 5px #ffa500, 0 0 10px #ffa500; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.internalNofollowColor}, 0 0 10px ${colorsSettings.internalNofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.internalNofollowColor}, 0 0 30px ${colorsSettings.internalNofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.internalNofollowColor}, 0 0 10px ${colorsSettings.internalNofollowColor}; }
         }
         @keyframes zeldaGlowExternalDofollow {
-            0% { box-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }
-            50% { box-shadow: 0 0 20px #87cefa, 0 0 30px #00bfff; }
-            100% { box-shadow: 0 0 5px #00bfff, 0 0 10px #00bfff; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.externalDofollowColor}, 0 0 10px ${colorsSettings.externalDofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.externalDofollowColor}, 0 0 30px ${colorsSettings.externalDofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.externalDofollowColor}, 0 0 10px ${colorsSettings.externalDofollowColor}; }
         }
         @keyframes zeldaGlowExternalNofollow {
-            0% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }
-            50% { box-shadow: 0 0 20px #ba55d3, 0 0 30px #8a2be2; }
-            100% { box-shadow: 0 0 5px #8a2be2, 0 0 10px #8a2be2; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.externalNofollowColor}, 0 0 10px ${colorsSettings.externalNofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.externalNofollowColor}, 0 0 30px ${colorsSettings.externalNofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.externalNofollowColor}, 0 0 10px ${colorsSettings.externalNofollowColor}; }
         }
         @keyframes zeldaGlowSubdomainDofollow {
-            0% { box-shadow: 0 0 5px #32cd32, 0 0 10px #32cd32; }
-            50% { box-shadow: 0 0 20px #7cfc00, 0 0 30px #32cd32; }
-            100% { box-shadow: 0 0 5px #32cd32, 0 0 10px #32cd32; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.subdomainDofollowColor}, 0 0 10px ${colorsSettings.subdomainDofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.subdomainDofollowColor}, 0 0 30px ${colorsSettings.subdomainDofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.subdomainDofollowColor}, 0 0 10px ${colorsSettings.subdomainDofollowColor}; }
         }
         @keyframes zeldaGlowSubdomainNofollow {
-            0% { box-shadow: 0 0 5px #228b22, 0 0 10px #228b22; }
-            50% { box-shadow: 0 0 20px #6b8e23, 0 0 30px #228b22; }
-            100% { box-shadow: 0 0 5px #228b22, 0 0 10px #228b22; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.subdomainNofollowColor}, 0 0 10px ${colorsSettings.subdomainNofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.subdomainNofollowColor}, 0 0 30px ${colorsSettings.subdomainNofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.subdomainNofollowColor}, 0 0 10px ${colorsSettings.subdomainNofollowColor}; }
         }
         @keyframes zeldaGlowSuspiciousDofollow {
-            0% { box-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500; }
-            50% { box-shadow: 0 0 20px #ff6347, 0 0 30px #ff4500; }
-            100% { box-shadow: 0 0 5px #ff4500, 0 0 10px #ff4500; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.suspiciousDofollowColor}, 0 0 10px ${colorsSettings.suspiciousDofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.suspiciousDofollowColor}, 0 0 30px ${colorsSettings.suspiciousDofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.suspiciousDofollowColor}, 0 0 10px ${colorsSettings.suspiciousDofollowColor}; }
         }
         @keyframes zeldaGlowSuspiciousNofollow {
-            0% { box-shadow: 0 0 5px #dc143c, 0 0 10px #dc143c; }
-            50% { box-shadow: 0 0 20px #ff1493, 0 0 30px #dc143c; }
-            100% { box-shadow: 0 0 5px #dc143c, 0 0 10px #dc143c; }
+            0% { box-shadow: 0 0 5px ${colorsSettings.suspiciousNofollowColor}, 0 0 10px ${colorsSettings.suspiciousNofollowColor}; }
+            50% { box-shadow: 0 0 15px ${colorsSettings.suspiciousNofollowColor}, 0 0 30px ${colorsSettings.suspiciousNofollowColor}; }
+            100% { box-shadow: 0 0 5px ${colorsSettings.suspiciousNofollowColor}, 0 0 10px ${colorsSettings.suspiciousNofollowColor}; }
         }
 
         /* Styling by data-attribute */
         a[data-zelda-highlight="internal-dofollow"] {
-            background-color: #ffd700;
+            background-color: ${colorsSettings.internalDofollowColor};
             color: #000;
             font-weight: bold;
             border-radius: 4px;
@@ -75,7 +94,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="internal-nofollow"] {
-            background-color: #ffa500;
+            background-color: ${colorsSettings.internalNofollowColor};
             color: #000;
             font-weight: bold;
             border-radius: 4px;
@@ -83,7 +102,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="external-dofollow"] {
-            background-color: #00bfff;
+            background-color: ${colorsSettings.externalDofollowColor};
             color: #000;
             font-weight: bold;
             border-radius: 4px;
@@ -91,7 +110,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="external-nofollow"] {
-            background-color: #8a2be2;
+            background-color: ${colorsSettings.externalNofollowColor};
             color: #fff;
             font-weight: bold;
             border-radius: 4px;
@@ -99,7 +118,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="subdomain-dofollow"] {
-            background-color: #32cd32;
+            background-color: ${colorsSettings.subdomainDofollowColor};
             color: #000;
             font-weight: bold;
             border-radius: 4px;
@@ -107,7 +126,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="subdomain-nofollow"] {
-            background-color: #228b22;
+            background-color: ${colorsSettings.subdomainNofollowColor};
             color: #fff;
             font-weight: bold;
             border-radius: 4px;
@@ -115,7 +134,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="suspicious-dofollow"] {
-            background-color: #ff4500;
+            background-color: ${colorsSettings.suspiciousDofollowColor};
             color: #fff;
             font-weight: bold;
             border-radius: 4px;
@@ -123,7 +142,7 @@ function injectZeldaStyles() {
             transition: all 0.3s ease;
         }
         a[data-zelda-highlight="suspicious-nofollow"] {
-            background-color: #dc143c;
+            background-color: ${colorsSettings.suspiciousNofollowColor};
             color: #fff;
             font-weight: bold;
             border-radius: 4px;

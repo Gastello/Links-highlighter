@@ -8,7 +8,7 @@ html, body {
 body {
     font-family: 'Friz Quadrata Std', sans-serif;
     background: url("background.jpg") no-repeat;
-    background-size: 1800px;
+    background-size: cover;
     min-height: 300px;
     height: 100%;
     width: 400px;
@@ -73,10 +73,10 @@ body {
 
 .extension-settings__title {
     font-size: 14px;
-    margin-bottom: 10px;
     color: #FFD700;
     cursor: pointer;
     user-select: none;
+    text-shadow: 1px 1px 0 #000;
 }
 
 .extension-settings__title .arrow {
@@ -94,6 +94,7 @@ body {
 .settings-group {
     margin-bottom: 15px;
 }
+
 
 .group-title {
     font-size: 14px;
@@ -169,8 +170,31 @@ body {
     font-size: 18px;
     font-weight: bold;
     padding: 10px;
+    text-shadow:
+        2px 2px #000,
+        4px 4px #222;
 }
 
 .hidden {
     display: none;
 }
+
+.settings-color{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #FFD700;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding: 5px;
+}
+.settings-color input{
+    width: 25px;
+    height: 25px;
+    border: 2px solid #FFD700;
+    background-color: #111;
+    box-shadow: 2px 2px 0 #000;
+    margin-right: 10px;
+    position: relative;
+} 
