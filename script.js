@@ -250,6 +250,7 @@ function highlightLinks(filters) {
             }
         } else {
             link.removeAttribute('data-zelda-highlight');
+            link.removeAttribute('title');
         }
     });
 

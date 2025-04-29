@@ -163,6 +163,8 @@ function highlightLinks(filters) {
     const currentDomain = window.location.hostname;
     const currentBase = getBaseDomain(currentDomain);
 
+    let total = 0, count = 0;
+
     links.forEach(link => {
         const href = link.getAttribute('href');
         const rel = link.getAttribute('rel') || '';
@@ -193,6 +195,8 @@ function highlightLinks(filters) {
             linkType = 'external';
         }
 
+        total++;
+
         const matchesLinkType =
             filters.linkType === 'all' ||
             (filters.linkType === 'internal' && (linkType === 'internal' || linkType === 'subdomain')) ||
@@ -206,6 +210,8 @@ function highlightLinks(filters) {
         const shouldHighlightSuspicious = filters.highlightSuspiciousLinks && isSuspicious;
 
         if (matchesLinkType && matchesFollowType && (shouldHighlightSuspicious || !isSuspicious)) {
+            count++;
+
             let dataHighlight = '';
 
             if (shouldHighlightSuspicious && isSuspicious) {
@@ -224,6 +230,9 @@ function highlightLinks(filters) {
             }
         } else {
             link.removeAttribute('data-zelda-highlight');
+            link.removeAttribute('title');
         }
     });
+
+    return `Highlighted: ${count} of ${total} links`;
 }
