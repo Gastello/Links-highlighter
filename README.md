@@ -81,7 +81,7 @@ Suspicious links are automatically highlighted with a **customizable color and g
 
 - Export link data as CSV 
 - Detect and categorize file links (e.g., PDF, DOCX, ZIP, MP4) to help identify downloadable resources and media assets.
-
+- Automatically detect and highlight **new links added in real-time**
 ---
 
 ### 📜 License
