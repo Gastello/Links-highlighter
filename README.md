@@ -49,6 +49,20 @@ The "Full Info" panel shows:
 - Count of dofollow vs. nofollow
 - Live list of detected links (scrollable & color-coded)
 
+## 🕵️ Suspicious Link Detection
+
+Some links may not behave like regular web links — they can be broken, malformed, or use non-standard protocols. The extension includes smart logic to detect such links and treat them as **suspicious**, helping you identify potential issues in your link structure.
+
+### 🚩 A link is marked as suspicious if it:
+
+- Uses uncommon or insecure protocols:
+  - `javascript:`, `vbscript:`, `data:`, `blob:`, `filesystem:`, `mailto:`, `tel:`, `sms:`, `file:`, `ftp:`, etc.
+- Is clearly malformed or fake:
+  - Empty string (`""`), just a hash (`"#"`), slashes-only (`"/"`, `"//"`)
+  - Broken patterns like `hxxp://`, `htps://`, `http:///`, or `://`
+
+Suspicious links are automatically highlighted with a **customizable color and glowing animation**, just like other link types.
+
 ## 🪄 Zelda-Style Animations
 
 - Pure CSS `@keyframes` glow animations
