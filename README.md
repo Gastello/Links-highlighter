@@ -45,7 +45,6 @@ The "Full Info" panel shows:
 - Total number of links
 - Number of each type (internal, external, subdomain, suspicious)
 - Count of dofollow vs. nofollow
-- Live list of detected links (scrollable & color-coded)
 
 ## 🕵️ Suspicious Link Detection
 
