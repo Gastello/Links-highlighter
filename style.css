@@ -185,9 +185,11 @@ body {
     font-size: 14px;
     color: #FFD700;
     position: relative;
-    cursor: pointer;
     user-select: none;
     padding: 5px;
+}
+.settings-color label{
+    cursor: pointer;
 }
 .settings-color input{
     width: 25px;
@@ -197,4 +199,5 @@ body {
     box-shadow: 2px 2px 0 #000;
     margin-right: 10px;
     position: relative;
+    cursor: pointer;
 } 
