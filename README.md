@@ -17,8 +17,6 @@ A Chrome extension that visually highlights links on any webpage, helping SEOs a
   - Type counts (internal/external/etc.)
   - Follow type counts (dofollow/nofollow)
   - Live preview of highlighted links
-- 🎯 Dynamic updates:
-  - UI reflects changes immediately without reload
 
 ## 📦 How to Install
 
