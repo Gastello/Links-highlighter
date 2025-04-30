@@ -1,14 +1,3 @@
-const types = [
-    { highlight: 'internal-dofollow', key: 'internalDofollowColor' },
-    { highlight: 'internal-nofollow', key: 'internalNofollowColor' },
-    { highlight: 'external-dofollow', key: 'externalDofollowColor' },
-    { highlight: 'external-nofollow', key: 'externalNofollowColor' },
-    { highlight: 'subdomain-dofollow', key: 'subdomainDofollowColor' },
-    { highlight: 'subdomain-nofollow', key: 'subdomainNofollowColor' },
-    { highlight: 'suspicious-dofollow', key: 'suspiciousDofollowColor' },
-    { highlight: 'suspicious-nofollow', key: 'suspiciousNofollowColor' },
-];
-
 chrome.storage.sync.remove('highlightedCount');
 
 chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType', 
@@ -61,6 +50,17 @@ function injectZeldaStyles(colorsSettings) {
             text-shadow: 0px 0px 4px black;
         }
     `;
+
+    const types = [
+        { highlight: 'internal-dofollow', key: 'internalDofollowColor' },
+        { highlight: 'internal-nofollow', key: 'internalNofollowColor' },
+        { highlight: 'external-dofollow', key: 'externalDofollowColor' },
+        { highlight: 'external-nofollow', key: 'externalNofollowColor' },
+        { highlight: 'subdomain-dofollow', key: 'subdomainDofollowColor' },
+        { highlight: 'subdomain-nofollow', key: 'subdomainNofollowColor' },
+        { highlight: 'suspicious-dofollow', key: 'suspiciousDofollowColor' },
+        { highlight: 'suspicious-nofollow', key: 'suspiciousNofollowColor' },
+    ];
 
     let styles = styleBase;
 

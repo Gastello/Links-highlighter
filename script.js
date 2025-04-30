@@ -1,14 +1,3 @@
-const types = [
-    { highlight: 'internal-dofollow', key: 'internalDofollowColor' },
-    { highlight: 'internal-nofollow', key: 'internalNofollowColor' },
-    { highlight: 'external-dofollow', key: 'externalDofollowColor' },
-    { highlight: 'external-nofollow', key: 'externalNofollowColor' },
-    { highlight: 'subdomain-dofollow', key: 'subdomainDofollowColor' },
-    { highlight: 'subdomain-nofollow', key: 'subdomainNofollowColor' },
-    { highlight: 'suspicious-dofollow', key: 'suspiciousDofollowColor' },
-    { highlight: 'suspicious-nofollow', key: 'suspiciousNofollowColor' },
-];
-
 document.addEventListener('DOMContentLoaded', () => {
     const highlightBtn = document.getElementById('highlight-btn');
     const resetBtn = document.getElementById('reset-btn');
@@ -29,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         suspiciousDofollowColor: '#ff4500',
         suspiciousNofollowColor: '#dc143c'
     }
+    
     chrome.storage.sync.get(['highlightSuspiciousLinks', 'highlightOnLoad', 'linkType', 'followType', 'highlightedCount', 'internalDofollowColor', 'externalDofollowColor', 'subdomainDofollowColor', 'suspiciousDofollowColor',
     'internalNofollowColor', 'externalNofollowColor', 'subdomainNofollowColor', 'suspiciousNofollowColor'], (result) => {
         colorsSettings.internalDofollowColor = result.internalDofollowColor || '#ffd700';
@@ -348,6 +338,7 @@ function highlightLinks(filters) {
     return `Highlighted: ${count} of ${total} links`;
 }
 
+
 function resetLinkStyles() {
     const links = document.querySelectorAll('a');
     links.forEach(link => {
@@ -479,6 +470,16 @@ function injectZeldaStyles(colorsSettings) {
         }
     `;
 
+    const types = [
+        { highlight: 'internal-dofollow', key: 'internalDofollowColor' },
+        { highlight: 'internal-nofollow', key: 'internalNofollowColor' },
+        { highlight: 'external-dofollow', key: 'externalDofollowColor' },
+        { highlight: 'external-nofollow', key: 'externalNofollowColor' },
+        { highlight: 'subdomain-dofollow', key: 'subdomainDofollowColor' },
+        { highlight: 'subdomain-nofollow', key: 'subdomainNofollowColor' },
+        { highlight: 'suspicious-dofollow', key: 'suspiciousDofollowColor' },
+        { highlight: 'suspicious-nofollow', key: 'suspiciousNofollowColor' },
+    ];
 
     let styles = styleBase;
 
